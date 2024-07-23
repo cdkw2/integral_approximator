@@ -59,7 +59,6 @@ class IntegralApproximationGUI:
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(fill=tk.BOTH, expand=True)
 
-        # Add navigation toolbar
         self.toolbar = NavigationToolbar2Tk(self.canvas, graph_frame)
         self.toolbar.update()
         self.canvas_widget.pack(fill=tk.BOTH, expand=True)
@@ -69,10 +68,10 @@ class IntegralApproximationGUI:
             # Elementary functions
             "x^2": lambda x: x ** 2,
             "x^3": lambda x: x ** 3,
-            "sin(x)": math.sin,
-            "cos(x)": math.cos,
+            "sin(x)": self.sin_taylor,
+            "cos(x)": self.cos_taylor,
             "ln(x)": self.ln_approximation,
-            "e^x": math.exp,
+            "e^x": self.exp_taylor,
             
             # Non-elementary functions
             "erf(x)": special.erf,  # Error function
@@ -176,6 +175,24 @@ class IntegralApproximationGUI:
             raise ValueError("ln(x) is undefined for x <= 0")
         a = 10000
         return a * (x ** (1/a)) - a
+
+    def sin_taylor(self, x: float, terms: int = 10) -> float:
+        result = 0
+        for n in range(terms):
+            result += ((-1)**n * x**(2*n+1)) / math.factorial(2*n+1)
+        return result
+
+    def cos_taylor(self, x: float, terms: int = 10) -> float:
+        result = 0
+        for n in range(terms):
+            result += ((-1)**n * x**(2*n)) / math.factorial(2*n)
+        return result
+
+    def exp_taylor(self, x: float, terms: int = 10) -> float:
+        result = 0
+        for n in range(terms):
+            result += x**n / math.factorial(n)
+        return result
 
 if __name__ == "__main__":
     root = tk.Tk()
