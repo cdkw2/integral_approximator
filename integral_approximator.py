@@ -14,6 +14,7 @@ class IntegralApproximationGUI:
         master.geometry("1100x700")
 
         self.functions = self.get_functions()
+        self.taylor_terms = 10
 
         self.create_heading()
         self.create_widgets()
@@ -27,34 +28,39 @@ class IntegralApproximationGUI:
     def create_widgets(self):
         input_frame = ttk.Frame(self.master)
         input_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
-
+        
         ttk.Label(input_frame, text="Lower limit (a):").grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.a_entry = ttk.Entry(input_frame)
         self.a_entry.grid(row=0, column=1, padx=5, pady=5)
-
+        
         ttk.Label(input_frame, text="Upper limit (b):").grid(row=1, column=0, padx=5, pady=5, sticky="w")
         self.b_entry = ttk.Entry(input_frame)
         self.b_entry.grid(row=1, column=1, padx=5, pady=5)
-
+        
         ttk.Label(input_frame, text="Number of subintervals (n):").grid(row=2, column=0, padx=5, pady=5, sticky="w")
         self.n_entry = ttk.Entry(input_frame)
         self.n_entry.grid(row=2, column=1, padx=5, pady=5)
-
-        ttk.Label(input_frame, text="Select function:").grid(row=3, column=0, padx=5, pady=5, sticky="w")
+        
+        ttk.Label(input_frame, text="Taylor series terms:").grid(row=3, column=0, padx=5, pady=5, sticky="w")
+        self.taylor_terms_entry = ttk.Entry(input_frame)
+        self.taylor_terms_entry.grid(row=3, column=1, padx=5, pady=5)
+        self.taylor_terms_entry.insert(0, str(self.taylor_terms))
+        
+        ttk.Label(input_frame, text="Select function:").grid(row=4, column=0, padx=5, pady=5, sticky="w")
         self.function_var = tk.StringVar()
         self.function_dropdown = ttk.Combobox(input_frame, textvariable=self.function_var)
         self.function_dropdown['values'] = list(self.functions.keys())
-        self.function_dropdown.grid(row=3, column=1, padx=5, pady=5)
+        self.function_dropdown.grid(row=4, column=1, padx=5, pady=5)
         self.function_dropdown.current(0)
-
+        
         self.calculate_button = ttk.Button(input_frame, text="Calculate", command=self.calculate)
-        self.calculate_button.grid(row=4, column=0, columnspan=2, pady=10)
-
+        self.calculate_button.grid(row=5, column=0, columnspan=2, pady=10)
+        
         self.result_label = ttk.Label(input_frame, text="Result:")
-        self.result_label.grid(row=5, column=0, columnspan=2, pady=5)
-
+        self.result_label.grid(row=6, column=0, columnspan=2, pady=5)
+        
         self.result_value = ttk.Label(input_frame, text="")
-        self.result_value.grid(row=6, column=0, columnspan=2, pady=5)
+        self.result_value.grid(row=7, column=0, columnspan=2, pady=5)
 
     def create_graph(self):
         graph_frame = ttk.Frame(self.master)
@@ -97,9 +103,12 @@ class IntegralApproximationGUI:
             a = float(self.a_entry.get())
             b = float(self.b_entry.get())
             n = int(self.n_entry.get())
+            self.taylor_terms = int(self.taylor_terms_entry.get())
 
             if n <= 0:
                 raise ValueError("n must be a positive integer")
+            if self.taylor_terms <= 0:
+                raise ValueError("Number of Taylor series terms must be a positive integer")
 
             selected_function = self.functions[self.function_var.get()]
             result = self.trapezoidal_approximation(selected_function, a, b, n)
@@ -182,21 +191,21 @@ class IntegralApproximationGUI:
         a = 10000
         return a * (x ** (1/a)) - a
 
-    def sin_taylor(self, x: float, terms: int = 10) -> float:
+    def sin_taylor(self, x: float) -> float:
         result = 0
-        for n in range(terms):
+        for n in range(self.taylor_terms):
             result += ((-1)**n * x**(2*n+1)) / math.factorial(2*n+1)
         return result
 
-    def cos_taylor(self, x: float, terms: int = 10) -> float:
+    def cos_taylor(self, x: float) -> float:
         result = 0
-        for n in range(terms):
+        for n in range(self.taylor_terms):
             result += ((-1)**n * x**(2*n)) / math.factorial(2*n)
         return result
 
-    def exp_taylor(self, x: float, terms: int = 10) -> float:
+    def exp_taylor(self, x: float) -> float:
         result = 0
-        for n in range(terms):
+        for n in range(self.taylor_terms):
             result += x**n / math.factorial(n)
         return result
 
