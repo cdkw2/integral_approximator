@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, font as font
 import math
 from typing import Callable, Dict
 import matplotlib.pyplot as plt
@@ -11,16 +11,22 @@ class IntegralApproximationGUI:
     def __init__(self, master):
         self.master = master
         master.title("Integral Approximation")
-        master.geometry("900x700")
+        master.geometry("1100x700")
 
         self.functions = self.get_functions()
 
+        self.create_heading()
         self.create_widgets()
         self.create_graph()
 
+    def create_heading(self):
+        heading_font = font.Font(family="Helvetica", size=24, weight="bold")
+        heading = tk.Label(self.master, text="Recursive Algorithm for Kinetic Unified Zone Approximation (RAKUZA)", font=heading_font)
+        heading.grid(row=0, column=0, columnspan=2, pady=20)
+
     def create_widgets(self):
         input_frame = ttk.Frame(self.master)
-        input_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        input_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
         ttk.Label(input_frame, text="Lower limit (a):").grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.a_entry = ttk.Entry(input_frame)
@@ -52,7 +58,7 @@ class IntegralApproximationGUI:
 
     def create_graph(self):
         graph_frame = ttk.Frame(self.master)
-        graph_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+        graph_frame.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
         self.fig, self.ax = plt.subplots(figsize=(5, 4))
         self.canvas = FigureCanvasTkAgg(self.fig, master=graph_frame)
